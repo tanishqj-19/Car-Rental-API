@@ -1,11 +1,61 @@
+using CarRentalSystemAPI.Data;
+using CarRentalSystemAPI.Middlewares;
+using CarRentalSystemAPI.Repositories;
+using CarRentalSystemAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var jwtVal = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtVal["Key"]);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+// My Services....................
+builder.Services.AddScoped<ICarRepository, CarRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICarRentalService, CarRentalService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<AuthService>();
+// Configuration of JWT Servic............................
+// First Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(op =>
+{
+    op.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtVal["Issuer"],
+        ValidAudience = jwtVal["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+
+    };
+});
+
+// Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", j => j.RequireRole("Admin"));
+    options.AddPolicy("All", j => j.RequireRole(["Admin", "User"]));
+});
+
+// Db Context
+builder.Services.AddDbContext<CarDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
@@ -18,6 +68,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Custom Middleware for JWT Service
+//app.UseAuthMiddleware();
+
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

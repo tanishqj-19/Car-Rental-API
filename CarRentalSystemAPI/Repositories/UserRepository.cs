@@ -1,41 +1,42 @@
 ﻿
 
+using CarRentalSystemAPI.Data;
 using CarRentalSystemAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalSystemAPI.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private static List<User> allUsers = new List<User>();  
-        public Task AddUser(User user)
-        {
-            allUsers.Add(user);
+        private CarDbContext context;
 
-            return Task.CompletedTask;
+        public UserRepository(CarDbContext context)
+        {
+            this.context = context;
+        }
+        public async Task AddUser(User user)
+        {
+            await context.Users.AddAsync(user);
+            await context.SaveChangesAsync();
+
+
         }
 
-        public Task<User> GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmail(string email)
         {
-            var currUser = allUsers.Find(x=> x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var currUser = await context.Users.FirstOrDefaultAsync(u=> u.Email.Equals(email));
 
-            if (currUser == null)
-            {
-                return Task.FromResult<User>(new User());
-            }
-
-            return Task.FromResult<User>(currUser);
+            return currUser;
         }
 
-        public Task<User> GetUserById(int Id)
+        public async Task<User?> GetUserById(int Id)
         {
-            var currUser = allUsers.Find(user => user.Id == Id);
-            if (currUser == null)
-            {
-                return Task.FromResult<User>(new User());
-            }
-
-            return Task.FromResult<User>(currUser);
+            var currUser = await context.Users.FindAsync(Id);
+           
+            return currUser;
 
         }
+
+        
     }
 }

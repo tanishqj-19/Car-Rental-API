@@ -1,45 +1,69 @@
-﻿using CarRentalSystemAPI.Models;
+﻿using CarRentalSystemAPI.Data;
+using CarRentalSystemAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalSystemAPI.Repositories
-{
+{   
     public class CarRepository : ICarRepository
     {
+        private CarDbContext context;
+        public CarRepository(CarDbContext context)
+        {
+            this.context = context;
+        }
         private static List<Car> cars = new List<Car>();
 
-        public Task<Car> GetCarById(int Id)
+        public async Task<Car?> GetCarById(int Id)
         {
-            var carById = cars.Find(x => x.Id == Id);
+            var carById = await context.Cars.FindAsync(Id);
             if(carById == null)
             {
-                return Task.FromResult<Car>(new Car());
+                return null;
             }
-            return Task.FromResult<Car>(carById);
+            return carById;
         }
 
-        public Task<IEnumerable<Car>> GetAvailableCars()
+        public async Task<IEnumerable<Car>> GetAvailableCars()
         {
-            var carsAvailable = cars.Where(currCar => currCar.IsAvailable).ToList();
+            var carsAvailable = await context.Cars.Where(currCar => currCar.IsAvailable).ToListAsync();
 
-            return Task.FromResult(carsAvailable.AsEnumerable());
+            return carsAvailable;
         }
 
-        public Task AddCar(Car newCar)
+        public async Task AddCar(Car newCar)
         {
-            cars.Add(newCar);
+            await context.Cars.AddAsync(newCar);
+            await context.SaveChangesAsync();
 
-            return Task.CompletedTask;
+            
 
         }
-        public Task UpdateCarAvailability(int Id, bool newAvailability)
+        public async Task UpdateCarAvailability(int Id, bool newAvailability)
         {
-            var carToBeUpdated = cars.Find(c => c.Id == Id);
+            var carToBeUpdated = await context.Cars.FindAsync(Id);
 
             if (carToBeUpdated != null)
             {
                 carToBeUpdated.IsAvailable = newAvailability;
+                context.Cars.Update(carToBeUpdated);
+                await context.SaveChangesAsync();
             }
 
-            return Task.CompletedTask;
+            
+        }
+
+        public async Task DeleteCarById(int Id)
+        {
+            var currCar = await context.Cars.FindAsync(Id);
+            
+
+            if (currCar != null)
+            {
+                context.Cars.Remove(currCar);
+                await context.SaveChangesAsync();
+            }
+
+            
         }
     }
 }

@@ -6,8 +6,8 @@ namespace CarRentalSystemAPI.Repositories
     {
         Task AddUser(User user);
 
-        Task<User> GetUserByEmail(string email);
+        Task<User?> GetUserByEmail(string email);
 
-        Task<User> GetUserById(int Id);
+        Task<User?> GetUserById(int Id);
     }
 }
