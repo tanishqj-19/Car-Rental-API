@@ -1,5 +1,5 @@
 # Car Rental API
-A comprehensive Car Rental System API built with C#, Entity Framework, and JWT authentication.
+#### A comprehensive Car Rental System API built with C#, Entity Framework, and JWT authentication.
 ---
 
 
@@ -26,7 +26,7 @@ A comprehensive Car Rental System API built with C#, Entity Framework, and JWT a
 ---
 
 ## Screenshots 
-Please check the screenshot folder: [Here](www.google.com)
+Please check the screenshot folder: [Here](https://github.com/tanishqj-19/task404/tree/master/CarRentalScreenshots)
 ## Repositories
 
 1. **CarRepository**:
