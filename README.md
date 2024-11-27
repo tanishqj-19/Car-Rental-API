@@ -26,7 +26,7 @@
 ---
 
 ## Screenshots 
-Please check the screenshot folder: [Here](https://github.com/tanishqj-19/task404/tree/master/CarRentalScreenshots)
+Please check the screenshot folder: [Here](https://github.com/tanishqj-19/Car-Rental-API/tree/master/CarRentalScreenshots)
 ## Repositories
 
 1. **CarRepository**:
