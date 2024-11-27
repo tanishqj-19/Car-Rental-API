@@ -1,5 +1,4 @@
 using CarRentalSystemAPI.Data;
-using CarRentalSystemAPI.Middlewares;
 using CarRentalSystemAPI.Repositories;
 using CarRentalSystemAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,10 +7,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 var jwtVal = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtVal["Key"]);
+
 
 builder.Services.AddControllers();
 
@@ -22,10 +23,19 @@ builder.Services.AddSwaggerGen();
 // My Services....................
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICarRentalService, CarRentalService>();
-builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<RentalRepository>();
 builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ICarRentalService, CarRentalService>();
+
+
+//Email Service Configuration
+
+
+
 // Configuration of JWT Servic............................
 // First Authentication
 builder.Services.AddAuthentication(options =>

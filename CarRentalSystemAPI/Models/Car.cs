@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CarRentalSystemAPI.Models
 {
@@ -27,5 +28,9 @@ namespace CarRentalSystemAPI.Models
         [Required(ErrorMessage = "Year is required.")]
         [Range(1900, 2100, ErrorMessage = "Year must be between 1900 and 2100.")]
         public int Year { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Rental> Rentals { get; set; } = new List<Rental>();
+
     }
 }

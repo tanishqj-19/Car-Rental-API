@@ -30,6 +30,8 @@ namespace CarRentalSystemAPI.Repositories
             return carsAvailable;
         }
 
+        
+
         public async Task AddCar(Car newCar)
         {
             await context.Cars.AddAsync(newCar);
@@ -38,30 +40,40 @@ namespace CarRentalSystemAPI.Repositories
             
 
         }
-        public async Task UpdateCarAvailability(int Id, bool newAvailability)
+        public async Task UpdateCarAvailability(int Id, Car car)
         {
             var carToBeUpdated = await context.Cars.FindAsync(Id);
 
-            if (carToBeUpdated != null)
+            if (carToBeUpdated == null)
             {
-                carToBeUpdated.IsAvailable = newAvailability;
-                context.Cars.Update(carToBeUpdated);
-                await context.SaveChangesAsync();
+                throw new Exception($"Car doesn't exist with id {Id}"); 
             }
 
-            
+            carToBeUpdated.PricePerDay = car.PricePerDay;
+            carToBeUpdated.Year = car.Year;
+            carToBeUpdated.Rentals = new List<Rental>();
+            carToBeUpdated.Make = car.Make;
+            carToBeUpdated.Model = car.Model;
+            carToBeUpdated.IsAvailable = car.IsAvailable;
+            context.Cars.Update(carToBeUpdated);
+            await context.SaveChangesAsync();
+
+
         }
 
         public async Task DeleteCarById(int Id)
         {
             var currCar = await context.Cars.FindAsync(Id);
-            
 
-            if (currCar != null)
+            if (currCar == null)
             {
-                context.Cars.Remove(currCar);
-                await context.SaveChangesAsync();
+                throw new Exception($"Car doesn't exist with id {Id}");
             }
+
+            
+            context.Cars.Remove(currCar);
+            await context.SaveChangesAsync();
+            
 
             
         }

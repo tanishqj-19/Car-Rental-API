@@ -7,7 +7,7 @@ namespace CarRentalSystemAPI.Repositories
         Task<Car?> GetCarById(int id);
         Task<IEnumerable<Car>> GetAvailableCars();
         Task AddCar(Car car);
-        Task UpdateCarAvailability(int Id, bool newAvailability);
+        Task UpdateCarAvailability(int Id, Car car);
         
         Task DeleteCarById(int Id);
     }

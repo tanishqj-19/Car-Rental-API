@@ -9,5 +9,7 @@ namespace CarRentalSystemAPI.Data
         
         public DbSet<User> Users { get; set; }
         public DbSet<Car> Cars { get; set; }
+        public DbSet<Rental> Rentals { get; set; }
+
     }
 }
